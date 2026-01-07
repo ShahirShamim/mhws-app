@@ -1,8 +1,8 @@
-\# Wellness Hub
+# Wellness Hub
 
 
 
-\*\*Your Wellness Companion\*\*
+**Your Wellness Companion**
 
 
 
@@ -10,57 +10,57 @@ Wellness Hub is a comprehensive web application designed to help users manage th
 
 
 
-\## 🚀 Features
+## 🚀 Features
 
 
 
-\- \*\*Health Knowledge\*\*: Access evidence-based NICE guidelines on various health topics including Depression \& Anxiety, Sleep Disorders, Weight Management, and more.
+- **Health Knowledge**: Access evidence-based NICE guidelines on various health topics including Depression & Anxiety, Sleep Disorders, Weight Management, and more.
 
-\- \*\*Task Planner\*\*: Break down your goals into manageable steps and track your progress effectively.
+- **Task Planner**: Break down your goals into manageable steps and track your progress effectively.
 
-\- \*\*Soothing Sounds\*\*: Relax and focus with high-quality brown noise.
+- **Soothing Sounds**: Relax and focus with high-quality brown noise.
 
-\- \*\*Modern UI\*\*: A clean, responsive, and accessible interface built with Radix UI and Tailwind CSS.
-
-
-
-\## 🛠️ Tech Stack
+- **Modern UI**: A clean, responsive, and accessible interface built with Radix UI and Tailwind CSS.
 
 
 
-\- \*\*Framework\*\*: \[Next.js](https://nextjs.org/)
-
-\- \*\*Styling\*\*: \[Tailwind CSS](https://tailwindcss.com/)
-
-\- \*\*Components\*\*: \[Radix UI](https://www.radix-ui.com/) \& \[Shadcn UI](https://ui.shadcn.com/)
-
-\- \*\*Icons\*\*: \[Lucide React](https://lucide.dev/)
-
-\- \*\*State Management \& Forms\*\*: \[React Hook Form](https://react-hook-form.com/) \& \[Zod](https://zod.dev/)
-
-\- \*\*Charts\*\*: \[Recharts](https://recharts.org/)
+## 🛠️ Tech Stack
 
 
 
-\## 📦 Getting Started
+- **Framework**: [Next.js](https:nextjs.org)
+
+- **Styling**: [Tailwind CSS](https:tailwindcss.com)
+
+- **Components**: [Radix UI](https:www.radix-ui.com) & [Shadcn UI](https:ui.shadcn.com)
+
+- **Icons**: [Lucide React](https:lucide.dev)
+
+- **State Management & Forms**: [React Hook Form](https:react-hook-form.com) & [Zod](https:zod.dev)
+
+- **Charts**: [Recharts](https:recharts.org)
 
 
 
-\### Prerequisites
+## 📦 Getting Started
 
 
 
-\- Node.js (Latest LTS recommended)
-
-\- npm or pnpm
+### Prerequisites
 
 
 
-\### Installation
+- Node.js (Latest LTS recommended)
+
+- npm or pnpm
 
 
 
-1\. Clone the repository:
+### Installation
+
+
+
+1. Clone the repository:
 
 &nbsp;  ```bash
 
