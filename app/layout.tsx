@@ -12,7 +12,7 @@ const _ibmPlexMono = V0_Font_IBM_Plex_Mono({ subsets: ['latin'], weight: ["100",
 const _lora = V0_Font_Lora({ subsets: ['latin'], weight: ["400","500","600","700"] })
 
 export const metadata: Metadata = {
-  title: "Wellness Hub",
+  title: "MHWS Wellness Hub",
   description: "Knowledge, planning, and mindfulness in one place",
   generator: "v0.app",
   icons: {

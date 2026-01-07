@@ -11,7 +11,7 @@ export default function Home() {
       {/* Navigation */}
       <nav className="border-b border-border bg-card">
         <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-serif font-bold text-primary">Wellness Hub</h1>
+          <h1 className="text-2xl font-serif font-bold text-primary">MHWS Wellness Hub</h1>
           <div className="flex gap-4">
             <Link href="/">
               <Button variant="ghost" className="text-foreground hover:text-primary">
