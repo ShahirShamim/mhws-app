@@ -8,6 +8,7 @@
 
 Wellness Hub is a comprehensive web application designed to help users manage their health and wellbeing. It provides evidence-based health knowledge, a task planner for goal management, and soothing sounds for focus and relaxation.
 
+See the website at https://astonishing-pika-072894.netlify.app/
 
 
 ## 🚀 Features
