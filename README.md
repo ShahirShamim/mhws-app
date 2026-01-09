@@ -67,4 +67,15 @@ Wellness Hub is a comprehensive web application designed to help users manage th
 &nbsp;  git clone <repository-url>
 
 &nbsp;  cd mhws-app
+&nbsp;  ```
+
+## 📝 Changelog
+
+### v1.1.0 (2026-01-09)
+
+- **Sounds**: Added soothing brown noise generator for focus and relaxation.
+- **Settings**: Introduced settings page for managing application preferences.
+- **Planner**: Enhanced task planner with persistence and reordering capabilities.
+- **Micro-interactions**: Added subtle animations for a better user experience.
+
 
