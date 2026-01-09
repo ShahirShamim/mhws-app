@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { BookOpen, CheckSquare, Waves } from "lucide-react"
@@ -9,33 +10,8 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Navigation */}
-      <nav className="border-b border-border bg-card">
-        <div className="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
-          <h1 className="text-2xl font-serif font-bold text-primary">MHWS Wellness Hub</h1>
-          <div className="flex gap-4">
-            <Link href="/">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Home
-              </Button>
-            </Link>
-            <Link href="/knowledge">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Knowledge
-              </Button>
-            </Link>
-            <Link href="/planner">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Planner
-              </Button>
-            </Link>
-            <Link href="/sounds">
-              <Button variant="ghost" className="text-foreground hover:text-primary">
-                Sounds
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </nav>
+      {/* Navigation */}
+      <Navigation />
 
       {/* Hero Section */}
       <main className="max-w-6xl mx-auto px-4 py-12">

@@ -1,11 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Navigation } from "@/components/navigation"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Trash2, Plus } from "lucide-react"
+import { Trash2, Plus, ArrowUp, ArrowDown } from "lucide-react"
 
 interface Task {
   id: string
@@ -21,9 +21,51 @@ interface Step {
 
 export default function PlannerPage() {
   const [tasks, setTasks] = useState<Task[]>([])
+  // ... (existing state)
+
+  // ... (existing useEffects)
+
+  const moveTask = (taskId: string, direction: 'up' | 'down') => {
+    const index = tasks.findIndex(t => t.id === taskId)
+    if (index === -1) return
+
+    const newTasks = [...tasks]
+    if (direction === 'up' && index > 0) {
+      [newTasks[index], newTasks[index - 1]] = [newTasks[index - 1], newTasks[index]]
+    } else if (direction === 'down' && index < newTasks.length - 1) {
+      [newTasks[index], newTasks[index + 1]] = [newTasks[index + 1], newTasks[index]]
+    }
+    setTasks(newTasks)
+  }
   const [newTaskTitle, setNewTaskTitle] = useState("")
   const [expandedTaskId, setExpandedTaskId] = useState<string | null>(null)
   const [newStepTitle, setNewStepTitle] = useState<Record<string, string>>({})
+  const [isLoaded, setIsLoaded] = useState(false)
+
+  // Load tasks on mount
+  useEffect(() => {
+    const saved = localStorage.getItem("wellness-planner-tasks")
+    if (saved) {
+      try {
+        setTasks(JSON.parse(saved))
+      } catch (e) {
+        console.error("Failed to parse tasks", e)
+      }
+    }
+    setIsLoaded(true)
+  }, [])
+
+  // Save tasks on change
+  useEffect(() => {
+    if (isLoaded) {
+      localStorage.setItem("wellness-planner-tasks", JSON.stringify(tasks))
+    }
+  }, [tasks, isLoaded])
+
+  if (!isLoaded) {
+    return null // or a loading spinner
+  }
+
 
   const addTask = () => {
     if (newTaskTitle.trim()) {
@@ -39,6 +81,24 @@ export default function PlannerPage() {
     }
   }
 
+  const moveStep = (taskId: string, stepId: string, direction: 'up' | 'down') => {
+    setTasks(prev => prev.map(task => {
+      if (task.id !== taskId) return task
+
+      const stepIndex = task.steps.findIndex(s => s.id === stepId)
+      if (stepIndex === -1) return task
+
+      const newSteps = [...task.steps]
+      if (direction === 'up' && stepIndex > 0) {
+        [newSteps[stepIndex], newSteps[stepIndex - 1]] = [newSteps[stepIndex - 1], newSteps[stepIndex]]
+      } else if (direction === 'down' && stepIndex < newSteps.length - 1) {
+        [newSteps[stepIndex], newSteps[stepIndex + 1]] = [newSteps[stepIndex + 1], newSteps[stepIndex]]
+      }
+
+      return { ...task, steps: newSteps }
+    }))
+  }
+
   const addStep = (taskId: string) => {
     const stepTitle = newStepTitle[taskId] || ""
     if (stepTitle.trim()) {
@@ -46,16 +106,16 @@ export default function PlannerPage() {
         tasks.map((task) =>
           task.id === taskId
             ? {
-                ...task,
-                steps: [
-                  ...task.steps,
-                  {
-                    id: Date.now().toString(),
-                    title: stepTitle,
-                    completed: false,
-                  },
-                ],
-              }
+              ...task,
+              steps: [
+                ...task.steps,
+                {
+                  id: Date.now().toString(),
+                  title: stepTitle,
+                  completed: false,
+                },
+              ],
+            }
             : task,
         ),
       )
@@ -68,9 +128,9 @@ export default function PlannerPage() {
       tasks.map((task) =>
         task.id === taskId
           ? {
-              ...task,
-              steps: task.steps.map((step) => (step.id === stepId ? { ...step, completed: !step.completed } : step)),
-            }
+            ...task,
+            steps: task.steps.map((step) => (step.id === stepId ? { ...step, completed: !step.completed } : step)),
+          }
           : task,
       ),
     )
@@ -150,14 +210,34 @@ export default function PlannerPage() {
                         </div>
                       )}
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => deleteTask(task.id)}
-                      className="text-destructive hover:text-destructive/90"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => moveTask(task.id, 'up')}
+                        disabled={tasks.indexOf(task) === 0}
+                        title="Move Up"
+                      >
+                        <ArrowUp className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => moveTask(task.id, 'down')}
+                        disabled={tasks.indexOf(task) === tasks.length - 1}
+                        title="Move Down"
+                      >
+                        <ArrowDown className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => deleteTask(task.id)}
+                        className="text-destructive hover:text-destructive/90"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </CardHeader>
 
@@ -175,14 +255,34 @@ export default function PlannerPage() {
                         <span className={`flex-1 ${step.completed ? "line-through text-muted-foreground" : ""}`}>
                           {step.title}
                         </span>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => deleteStep(task.id, step.id)}
-                          className="text-destructive hover:text-destructive/90"
-                        >
-                          <Trash2 className="w-3 h-3" />
-                        </Button>
+                        <div className="flex gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => moveStep(task.id, step.id, 'up')}
+                            disabled={task.steps.indexOf(step) === 0}
+                            className="h-6 w-6 p-0"
+                          >
+                            <ArrowUp className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => moveStep(task.id, step.id, 'down')}
+                            disabled={task.steps.indexOf(step) === task.steps.length - 1}
+                            className="h-6 w-6 p-0"
+                          >
+                            <ArrowDown className="w-3 h-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => deleteStep(task.id, step.id)}
+                            className="text-destructive hover:text-destructive/90 h-6 w-6 p-0"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </Button>
+                        </div>
                       </div>
                     ))}
                   </div>

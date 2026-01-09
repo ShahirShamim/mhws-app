@@ -31,6 +31,11 @@ export function Navigation() {
               Sounds
             </Button>
           </Link>
+          <Link href="/settings">
+            <Button variant="ghost" className="text-foreground hover:text-primary">
+              Settings
+            </Button>
+          </Link>
         </div>
       </div>
     </nav>

@@ -1,0 +1,72 @@
+
+/* Theme: Ocean */
+.ocean {
+  --background: #f0f8ff;
+  --foreground: #002b36;
+  --card: #e6f2ff;
+  --card-foreground: #002b36;
+  --popover: #e6f2ff;
+  --popover-foreground: #002b36;
+  --primary: #0077b6;
+  --primary-foreground: #ffffff;
+  --secondary: #caf0f8;
+  --secondary-foreground: #0077b6;
+  --muted: #ddeef2;
+  --muted-foreground: #5c7c8a;
+  --accent: #90e0ef;
+  --accent-foreground: #002b36;
+  --destructive: #d62828;
+  --destructive-foreground: #ffffff;
+  --border: #bde0fe;
+  --input: #bde0fe;
+  --ring: #0077b6;
+}
+
+/* Theme: Forest */
+.forest {
+  --background: #f1f8f1;
+  --foreground: #1b4332;
+  --card: #e8f5e9;
+  --card-foreground: #1b4332;
+  --popover: #e8f5e9;
+  --popover-foreground: #1b4332;
+  --primary: #2d6a4f;
+  --primary-foreground: #ffffff;
+  --secondary: #d8f3dc;
+  --secondary-foreground: #1b4332;
+  --muted: #c6e2c6;
+  --muted-foreground: #52796f;
+  --accent: #95d5b2;
+  --accent-foreground: #1b4332;
+  --destructive: #bc4749;
+  --destructive-foreground: #ffffff;
+  --border: #b7e4c7;
+  --input: #b7e4c7;
+  --ring: #2d6a4f;
+}
+
+/* Theme: Sunset */
+.sunset {
+  --background: #fff5eb;
+  --foreground: #4a2c2a;
+  --card: #fff0e0;
+  --card-foreground: #4a2c2a;
+  --popover: #fff0e0;
+  --popover-foreground: #4a2c2a;
+  --primary: #e76f51;
+  --primary-foreground: #ffffff;
+  --secondary: #ffdab9;
+  --secondary-foreground: #4a2c2a;
+  --muted: #fae1dd;
+  --muted-foreground: #9d8189;
+  --accent: #f4a261;
+  --accent-foreground: #4a2c2a;
+  --destructive: #d62828;
+  --destructive-foreground: #ffffff;
+  --border: #f4a261;
+  --input: #f4a261;
+  --ring: #e76f51;
+}
+
+/* Dark mode variations for themes could be added here, 
+   but for now we stick to light mode variants or rely on system dark mode overriding these if .dark is present */

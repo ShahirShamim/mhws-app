@@ -8,105 +8,74 @@ import { Play, Pause, Volume2, Clock, Zap, Music } from "lucide-react"
 
 type SoundType = "brown" | "rain" | "forest" | "ocean" | "wind"
 
+const SOUND_URLS: Record<SoundType, string> = {
+  brown: "/sounds/brown.wav",
+  rain: "/sounds/rain.wav",
+  forest: "/sounds/forest.wav",
+  ocean: "/sounds/ocean.wav",
+  wind: "/sounds/wind.wav",
+}
+
 export default function SoundsPage() {
   const [isPlaying, setIsPlaying] = useState(false)
   const [volume, setVolume] = useState(0.5)
-  const [frequency, setFrequency] = useState(0.5)
+  // Frequency/Tone Depth is not easily applicable to static MP3s without Web Audio API filters,
+  // preventing complexity, we will hide it or keep it as a placeholder for future implementation if needed,
+  // but for "correct sounds" via MP3, it's usually just volume and track selection.
+  // We'll remove the "Tone Depth" control as it was specific to the synth.
+
   const [timer, setTimer] = useState(0)
   const [timeLeft, setTimeLeft] = useState(0)
   const [soundType, setSoundType] = useState<SoundType>("brown")
-  const audioContextRef = useRef<AudioContext | null>(null)
-  const oscillatorRef = useRef<AudioBufferSourceNode | null>(null)
-  const gainNodeRef = useRef<GainNode | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const timerRef = useRef<NodeJS.Timeout | null>(null)
 
-  const generateNatureSound = (type: SoundType) => {
-    if (!audioContextRef.current) {
-      audioContextRef.current = new (window.AudioContext || (window as any).webkitAudioContext)()
+  // Initialize audio
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      audioRef.current = new Audio(SOUND_URLS[soundType])
+      audioRef.current.loop = true
+      audioRef.current.volume = volume
     }
 
-    const ctx = audioContextRef.current
-    const bufferSize = ctx.sampleRate * 4
-    const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate)
-    const output = noiseBuffer.getChannelData(0)
-
-    let lastOut = 0
-
-    switch (type) {
-      case "rain":
-        for (let i = 0; i < bufferSize; i++) {
-          output[i] = Math.random() * 2 - 1
-        }
-        break
-
-      case "forest":
-        const forestFilter = 0.03
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1
-          output[i] = (lastOut + forestFilter * white) / (1 + forestFilter)
-          lastOut = output[i]
-          output[i] *= 2.5
-        }
-        break
-
-      case "ocean":
-        const oceanFilter = 0.05
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1
-          output[i] = (lastOut + oceanFilter * white) / (1 + oceanFilter)
-          lastOut = output[i]
-          output[i] *= 4
-        }
-        break
-
-      case "wind":
-        const windFilter = 0.02
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1
-          const variation = Math.sin(i / 1000) * 0.5 + 0.5
-          output[i] = (lastOut + windFilter * white * variation) / (1 + windFilter)
-          lastOut = output[i]
-          output[i] *= 3
-        }
-        break
-
-      case "brown":
-      default:
-        const filterStrength = 0.01 + frequency * 0.03
-        for (let i = 0; i < bufferSize; i++) {
-          const white = Math.random() * 2 - 1
-          output[i] = (lastOut + filterStrength * white) / (1 + filterStrength)
-          lastOut = output[i]
-          output[i] *= 3.5
-        }
-    }
-
-    const noiseSource = ctx.createBufferSource()
-    noiseSource.buffer = noiseBuffer
-    noiseSource.loop = true
-
-    gainNodeRef.current = ctx.createGain()
-    gainNodeRef.current.gain.value = volume
-
-    noiseSource.connect(gainNodeRef.current)
-    gainNodeRef.current.connect(ctx.destination)
-    noiseSource.start(0)
-    oscillatorRef.current = noiseSource
-  }
-
-  const togglePlayback = () => {
-    if (isPlaying) {
-      if (audioContextRef.current && oscillatorRef.current) {
-        oscillatorRef.current.stop()
-        audioContextRef.current.close()
-        audioContextRef.current = null
-        oscillatorRef.current = null
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause()
+        audioRef.current = null
       }
-      if (timerRef.current) clearInterval(timerRef.current)
+    }
+  }, []) // Initialize once
+
+  // Handle Sound Type Change
+  useEffect(() => {
+    if (audioRef.current) {
+      const wasPlaying = !audioRef.current.paused
+      audioRef.current.src = SOUND_URLS[soundType]
+      audioRef.current.volume = volume
+      if (wasPlaying) {
+        audioRef.current.play().catch(e => console.error("Play error", e))
+      }
+    }
+  }, [soundType])
+
+  // Handle Volume Change
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = volume
+    }
+  }, [volume])
+
+  // Handle Play/Pause
+  const togglePlayback = () => {
+    if (!audioRef.current) return
+
+    if (isPlaying) {
+      audioRef.current.pause()
       setIsPlaying(false)
+      if (timerRef.current) clearInterval(timerRef.current)
       setTimeLeft(0)
     } else {
-      generateNatureSound(soundType)
+      audioRef.current.play().catch(e => console.error("Play error", e))
       setIsPlaying(true)
       if (timer > 0) {
         setTimeLeft(timer * 60)
@@ -114,16 +83,15 @@ export default function SoundsPage() {
     }
   }
 
+  // Timer Logic
   useEffect(() => {
     if (isPlaying && timer > 0) {
       timerRef.current = setInterval(() => {
         setTimeLeft((prev) => {
           if (prev <= 1) {
-            if (audioContextRef.current && oscillatorRef.current) {
-              oscillatorRef.current.stop()
-              audioContextRef.current.close()
-              audioContextRef.current = null
-              oscillatorRef.current = null
+            // Stop
+            if (audioRef.current) {
+              audioRef.current.pause()
             }
             setIsPlaying(false)
             return 0
@@ -138,20 +106,15 @@ export default function SoundsPage() {
   }, [isPlaying, timer])
 
   useEffect(() => {
-    if (gainNodeRef.current) {
-      gainNodeRef.current.gain.value = volume
-    }
-  }, [volume])
-
-  useEffect(() => {
+    // Cleanup on unmount
     return () => {
-      if (audioContextRef.current && isPlaying) {
-        oscillatorRef.current?.stop()
-        audioContextRef.current.close()
+      if (audioRef.current) {
+        audioRef.current.pause()
       }
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [isPlaying])
+  }, [])
+
 
   const formatTime = (seconds: number) => {
     const mins = Math.floor(seconds / 60)
@@ -200,19 +163,8 @@ export default function SoundsPage() {
                 {(["brown", "rain", "forest", "ocean", "wind"] as SoundType[]).map((type) => (
                   <Button
                     key={type}
-                    onClick={() => {
-                      setSoundType(type)
-                      if (isPlaying) {
-                        if (audioContextRef.current && oscillatorRef.current) {
-                          oscillatorRef.current.stop()
-                          audioContextRef.current.close()
-                          audioContextRef.current = null
-                          oscillatorRef.current = null
-                        }
-                        generateNatureSound(type)
-                      }
-                    }}
-                    disabled={isPlaying}
+                    onClick={() => setSoundType(type)}
+                    disabled={isPlaying && false}
                     variant={soundType === type ? "default" : "outline"}
                     className={soundType === type ? "bg-primary text-primary-foreground" : ""}
                     size="sm"
@@ -257,26 +209,7 @@ export default function SoundsPage() {
               </div>
             </div>
 
-            <div className="space-y-3">
-              <div className="flex items-center gap-3">
-                <Zap className="w-5 h-5 text-primary" />
-                <span className="text-sm font-medium">Tone Depth</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <input
-                  type="range"
-                  min="0"
-                  max="1"
-                  step="0.01"
-                  value={frequency}
-                  onChange={(e) => setFrequency(Number.parseFloat(e.target.value))}
-                  className="flex-1 h-2 bg-muted rounded-full appearance-none cursor-pointer accent-primary"
-                />
-                <span className="text-sm font-semibold w-8 text-right">
-                  {frequency < 0.33 ? "Deep" : frequency < 0.66 ? "Mid" : "Bright"}
-                </span>
-              </div>
-            </div>
+            {/* Removed Tone Depth control as it is not applicable to static audio files */}
 
             <div className="space-y-3">
               <div className="flex items-center gap-3">
